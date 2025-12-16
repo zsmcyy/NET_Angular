@@ -6,6 +6,10 @@ public class AppUser
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public required string DisplayName { get; set; }
     public required string Email { get; set; }
+    public string? ImageUrl { get; set; }
     public required byte[] PassWordHash { get; set; }
     public required byte[] PassWordSalt { get; set; }
+    
+    // 导航属性
+    public Member Member { get; set; } = null!;
 }

@@ -17,6 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 });
 builder.Services.AddCors( );
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -45,5 +46,20 @@ app.UseAuthentication();    //回答的问题是”你是谁？“
 app.UseAuthorization();     //知道”你是谁“后 判断”你是否有权限做这件事“
 
 app.MapControllers();
+
+// 自动创建数据库并填充数据
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+try
+{
+    var context = services.GetRequiredService<AppDbContext>();
+    await context.Database.MigrateAsync();
+    await Seed.SeedUsers(context);
+}
+catch (Exception e)
+{
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(e, "An error occurred while migrating the database.");
+}
 
 app.Run();
