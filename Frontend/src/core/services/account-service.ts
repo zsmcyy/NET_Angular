@@ -2,6 +2,7 @@ import {inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {LoginCreds, RegisterCreds, User} from '../../types/user';
 import {tap} from 'rxjs';
+import {environment} from '../../environments/environment';
 
 // 装饰器，表示这个类可以使用 Angular 的依赖注入
 // 也可以被注入到项目中的其他组件、服务、类 中。
@@ -13,7 +14,7 @@ export class AccountService {
   // 定义一个当前用户的信号（可以是User类型 也可以是 null）的属性，初始值为 null
   currentUser = signal<User|null>(null)
 
-  baseUrl = 'https://localhost:5001/api/'
+  private baseUrl = environment.apiUrl
 
   register(creds: RegisterCreds){
     return this.http.post<User>(this.baseUrl+'account/register', creds).pipe(
